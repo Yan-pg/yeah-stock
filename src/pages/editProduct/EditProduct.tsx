@@ -3,6 +3,7 @@ import { CreateOrEditProduct } from "../../components/CreateOrEditProduct";
 import { Product } from "../../models/product";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { parseCookies } from "nookies";
 
 export function EditProduct() {
   const [product, setProduct] = useState<Product>({} as Product);
@@ -15,7 +16,12 @@ export function EditProduct() {
   async function getProduct() {
     try {
       const { data: product } = await axios.get(
-        `${import.meta.env.VITE_API_HOST}/products/${id}`
+        `${import.meta.env.VITE_API_HOST}/products/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${parseCookies(null).token}`,
+          },
+        }
       );
       setProduct(product);
     } catch {

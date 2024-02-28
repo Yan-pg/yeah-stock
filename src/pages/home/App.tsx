@@ -15,6 +15,7 @@ import {
 } from "@phosphor-icons/react";
 import { Textarea } from "../../components/Textarea";
 import { Link, useNavigate } from "react-router-dom";
+import { parseCookies } from "nookies";
 
 const tabs = [
   { id: "1", title: "All" },
@@ -49,7 +50,12 @@ function App() {
       const mountQuery = `?${searchQuery}&${statusQuery}`;
 
       const { data: products } = await axios.get(
-        `${import.meta.env.VITE_API_HOST}/products${mountQuery}`
+        `${import.meta.env.VITE_API_HOST}/products${mountQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${parseCookies(null).token}`,
+          },
+        }
       );
       setProducts(products);
     } catch (error) {
@@ -89,7 +95,12 @@ function App() {
   async function handleDeleteProduct() {
     try {
       await axios.delete(
-        `${import.meta.env.VITE_API_HOST}/products/${productSelected.id}`
+        `${import.meta.env.VITE_API_HOST}/products/${productSelected.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${parseCookies(null).token}`,
+          },
+        }
       );
 
       alert("Product deleted successfully!");
@@ -144,7 +155,7 @@ function App() {
             data-view={view}
             className="grid data-[view=column]:grid-cols-2 data-[view=column]:md:grid-cols-3 data-[view=column]:lg:grid-cols-4 gap-5 mt-4"
           >
-            {products.map((product) => (
+            {products?.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}

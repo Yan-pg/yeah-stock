@@ -8,6 +8,7 @@ import axios from "axios";
 import { validateFields } from "../../ultils/validateFields";
 import { useNavigate } from "react-router-dom";
 import { Product } from "../../models/product";
+import { parseCookies } from "nookies";
 
 interface CreateOrEditProductProps {
   product?: Product;
@@ -43,7 +44,7 @@ export function CreateOrEditProduct({ product }: CreateOrEditProductProps) {
   async function createProduct() {
     try {
       const product = {
-        title,
+        name: title,
         quantity,
         measure,
         purchasePrice,
@@ -61,7 +62,11 @@ export function CreateOrEditProduct({ product }: CreateOrEditProductProps) {
         return;
       }
 
-      await axios.post(`${import.meta.env.VITE_API_HOST}/products`, product);
+      await axios.post(`${import.meta.env.VITE_API_HOST}/products`, product, {
+        headers: {
+          Authorization: `Bearer ${parseCookies(null).token}`,
+        },
+      });
 
       alert("Product created successfully.");
       navigate("/");
@@ -73,7 +78,12 @@ export function CreateOrEditProduct({ product }: CreateOrEditProductProps) {
   async function handleDeleteProduct() {
     try {
       await axios.delete(
-        `${import.meta.env.VITE_API_HOST}/products/${product?.id}`
+        `${import.meta.env.VITE_API_HOST}/products/${product?.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${parseCookies(null).token}`,
+          },
+        }
       );
 
       navigate("/");
